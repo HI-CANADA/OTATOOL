@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<link rel="stylesheet" href="style.css">
+<script src="main.js"></script>
+
+<head>
+    <title>HICAD BDC Reconciliation Script</title>
+    <meta charset="utf-8">
+
+</head>
+
+<h1><img src="HI-Canada_Logo.png" alt="HI Canada" width="100"> - OTA Reconciliation Tool</h1>
+
+<body>
+    <div id="options">
+        <label for="gc-id">Select your property:</label>
+        <select id="gc-id">
+            <option value="14">HI Banff</option>
+            <option value="7">HI Calgary</option>
+            <option value="10">HI Edmonton</option>
+            <option value="4">HI Jasper</option>
+            <option value="8">HI Lake Louise</option>
+            <option value="2">HI Vancouver Downtown</option>
+            <option value="1">HI Vancouver Jericho Beach</option>
+            <option value="5">HI Whistler</option>
+            <option value="15">HI Nova Scotia</option>
+            </option>
+        </select>
+        <p>
+            <label for="fileBDC">BDC/EXP file:</label>
+            <input type="file" id="fileBDC"> BDC -> Finance -> <a
+                href="https://admin.booking.com/hotel/hoteladmin/extranet_ng/manage/finance_reservations.html">Reservation
+                statements</a>, saved in CSV format;
+            or EXP -> Payments -> "<a
+                href="https://apps.expediapartnercentral.com/lodging/reservations/reconciliations.html">Review
+                reservations(reconciliations)</a>" -> Export to spreadsheet, then saved as CSV
+        <p>
+            <label for="fileGC">GC file:</label>
+            <input type="file" id="fileGC">
+            <a href="#" id="gc-ota-link" target="_blank" style="display: none;">
+                View OTA Commission Report for this hostel - (expand date range for best results)
+            </a>
+        <p>
+            <span id="hotelid_span">
+                <label for="hotelid">Hotel ID:
+                <span class="tooltip-icon" title="required for Expedia links">
+                    <i><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#B31217">
+                            <path
+                                d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
+                        </svg></i>
+                </span>
+                </label>
+                <input type="text" id="hotelid">
+            </span>
+        <p>
+            <span id="expediarate_span">
+                <label for="expediarate">
+                    Expedia Commission Percentage:
+                    <span class="tooltip-icon"
+                        title="Expedia usually charges 15% commission. Adjust this if your agreement differs.">
+                        <i><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#B31217">
+                                <path
+                                    d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
+                            </svg></i>
+                    </span>
+                </label>
+                <input type="text" id="expediarate" size="5" placeholder="15%">
+            </span>
+        <p>
+            <button onclick="createTable()" id="reconcile-button" disabled>Reconcile BDC/EXP</button> <input
+                type="checkbox" id="showall" disabled onclick="createTable()"><label for="showall">Show all (non-zero commission) rows</label>
+</div>
+
+<p id=" error">
+        </p>
+        <table id="tbl"></table>
+</body>
+
+</html>
