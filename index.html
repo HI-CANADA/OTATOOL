@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 <link rel="stylesheet" href="style.css">
-<script src="main.js"></script>
 
 <head>
     <title>HICAD BDC Reconciliation Script</title>
@@ -24,7 +23,6 @@
             <option value="1">HI Vancouver Jericho Beach</option>
             <option value="5">HI Whistler</option>
             <option value="15">HI Nova Scotia</option>
-            </option>
         </select>
         <p>
             <label for="fileBDC">BDC/EXP file:</label>
@@ -71,9 +69,9 @@
                 type="checkbox" id="showall" disabled onclick="createTable()"><label for="showall">Show all (non-zero commission) rows</label>
 </div>
 
-<p id=" error">
-        </p>
+<p id="error"></p>
         <table id="tbl"></table>
+        <script src="main.js" defer></script>
 </body>
 
 </html>

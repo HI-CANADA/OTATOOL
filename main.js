@@ -64,86 +64,65 @@ if (storageAvailable()) {
 let totalComm;
 let reportType;
 function createTable(showErrors = true) {
+  const errorElem = document.getElementById("error");
+  if (errorElem) errorElem.innerHTML = "";
+
+  try {
     totalComm = 0;
     reportType = 'BDC';
     if (bdcArray === undefined) return;
     let minCols, jAmt;
     let jArr, jDep, jName, jPct, jPID, jComm;
     let kPct = 15;
+
     if (bdcArray[0][0] === 'Reservation number') {
-        // columns (monthly invoice):
-        // 0: BDC number
-        // 3: arrival date
-        // 4: departure date
-        // 6: guest name
-        // 9: nights
-        // 10: commission percentage
-        // 12: final amount
-        // 13: commission amount (not actually needed for the monthly)
-        // 17: property ID
-        minCols = 19;
-        jAmt = 12;
-        jName = 6;
-        jPct = 10;
-        jComm = 13;
-        jPID = 17;
-        jArr = 3;
-        jDep = 4;
+      minCols = 19;
+      jAmt = 12;
+      jName = 6;
+      jPct = 10;
+      jComm = 13;
+      jPID = 17;
+      jArr = 3;
+      jDep = 4;
     } else if (bdcArray[0][0] === 'Book number') {
-        // columns (exported from "Reservations")
-        //  0: BDC-*
-        //  2: name
-        //  3: arrival
-        //  4: departure
-        // 12: price
-        // 13: commission percentage
-        // 14: commission ammount
-        // NO Property ID in this one!
-        minCols = 15;
-        jAmt = 12;
-        jName = 2;
-        jPct = 13;
-        jComm = 14;
-        jArr = 3;
-        jDep = 4;
+      minCols = 15;
+      jAmt = 12;
+      jName = 2;
+      jPct = 13;
+      jComm = 14;
+      jArr = 3;
+      jDep = 4;
     } else if (bdcArray[0][0] === 'Reservation ID') {
-        // Expedia reconciliation format
-        // 0: res id
-        // 1: check-in
-        // 2: check-out
-        // 3: guest name
-        // 5: reservation amount, including taxes, which might be wrong
-        // 6: commission amount
-        // 7: reconciled amount
-        reportType = 'EXP';
-        minCols = 7;
-        jArr = 1;
-        jDep = 2;
-        jName = 3;
-        jComm = 6;
-        jAmt = 8; // we will calculate this later based on the commission
-        expediarate.value = expediarate.value.replace(/\D/g, ''); // only digits allowed
-        kPct = parseInt(expediarate.value) || 15;
-        if (kPct < 15) kPct = 15;
-        else if (kPct > 40) kPct = 40; // surely commission will never exceed 40%, right?
-        expediarate.value = kPct;
+      reportType = 'EXP';
+      minCols = 7;
+      jArr = 1;
+      jDep = 2;
+      jName = 3;
+      jComm = 6;
+      jAmt = 8;
+      expediarate.value = expediarate.value.replace(/\D/g, '');
+      kPct = parseInt(expediarate.value) || 15;
+      if (kPct < 15) kPct = 15;
+      else if (kPct > 40) kPct = 40;
+      expediarate.value = kPct;
     } else {
-        // we don't recognize this format. Skip every row.
-        minCols = 10000;
+      minCols = 10000;
     }
+
     hotelid_span.style.display = reportType === 'EXP' ? 'inline' : 'none';
     expediarate_span.style.display = reportType === 'EXP' ? 'inline' : 'none';
-    hotelid.value = hotelid.value.replace(/\D/g, ''); // only digits allowed in hotel id
+    hotelid.value = hotelid.value.replace(/\D/g, '');
     if (hotelid.value === '') hotelid.value = '38769067';
 
     if (gcArray === undefined) return;
-    const button = document.getElementById('reconcile-button'); // if both arrays are defined, we can enable the button
+    const button = document.getElementById('reconcile-button');
     button.disabled = false;
     const checkbox = document.getElementById('showall');
     checkbox.disabled = false;
     let showAllRows = checkbox.checked;
-    const errorElem = document.getElementById('error');
-    errorElem.innerHTML = '';
+
+    const tableElem = document.getElementById("tbl");
+    if (!tableElem) throw new Error("Missing table element with id='tbl'");
 
     // collect folio data from the GC export
     const gcData = {}; // BDC# => array of info
@@ -360,7 +339,13 @@ function createTable(showErrors = true) {
     //     }
 
     document.getElementById("tbl").innerHTML = content;
-}
+ } catch (err) {
+    console.error(err);
+    if (errorElem) errorElem.innerHTML = `Error: ${err.message}`;
+  }
+} 
+window.createTable = createTable;
+
 function tableRow(ota, line, id, hotel_id, name, arr, dep, amt, pct, gcAmt, gcArr, gcDep, folios, statuses, isMerge, mergeTotal, nRows) {
     const mergeSupport = name === '"';
     let comm = '';
@@ -501,4 +486,7 @@ if (gcPropertyId) {
 //       - Replaced HI USA property list with Canadian hostels
 //       - Updated GuestCentrix base URLs to use guestcentrix.hihostels.ca
 //       - Cleaned up UI for clarity and accessibility
+// 2.4, 2025-07-03: adapted for HI Canada by Danny Champion
+//       - Bug fix, loaded the java script after the page loaded
+//       - Added some error handling to the createTable function
 });
